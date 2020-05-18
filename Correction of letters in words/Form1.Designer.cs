@@ -49,6 +49,7 @@
             // 
             // textBox1
             // 
+            this.textBox1.AllowDrop = true;
             this.textBox1.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.textBox1.Location = new System.Drawing.Point(8, 12);
             this.textBox1.Multiline = true;
@@ -56,6 +57,7 @@
             this.textBox1.Size = new System.Drawing.Size(498, 344);
             this.textBox1.TabIndex = 1;
             this.textBox1.TextChanged += new System.EventHandler(this.TextBox1_TextChanged);
+            this.textBox1.DragEnter += new System.Windows.Forms.DragEventHandler(this.TextBox1_DragEnter);
             // 
             // Form1
             // 
@@ -72,6 +74,7 @@
             this.MinimizeBox = false;
             this.Name = "Form1";
             this.Text = "Замена \"все равно / еще\" на  \"всё равно / ещё\"";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Form1_FormClosing);
             this.ResumeLayout(false);
             this.PerformLayout();
 

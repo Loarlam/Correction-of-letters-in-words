@@ -1,15 +1,34 @@
-﻿/*Необходимо сделать программу, в которой должен быть TextBox и Button.
-            1. Пользователь должен вставить в поле любую статью или цитату из интернета.
-            2. Нажатие на кнопку исправит все слова еще на ещё, все равно на всё равно.
-            3. Кнопка Исправить должна писать Исправлено после исправления.
-            4. Спустя пару секунд на кнопке должно быть написано Скопировать исправленный текст.
-            5. Текст, который исправлен в поле TextBox должен лететь в буфер обмена.
-            6. Кнопка пишет Скопировано в буфер обмена.*/
+﻿/*  
+Задание:
 
-/*За пример возьмем две строки:
-  Вовсе все равноправны все равно, все равно
-  Еще все равно, еще.*/
+1. необходимо сделать программу, в которой должен быть TextBox и Button;
+2. Пользователь должен вставить в поле любую статью или цитату из интернета;
+3. Нажатие на кнопку исправит все слова: еще на ещё / все равно на всё равно;
+4. Кнопка Исправить должна писать Исправлено после исправления.
+5. Спустя пару секунд на кнопке должно быть написано Скопировать исправленный текст;
+6. Текст, который исправлен в поле TextBox должен лететь в буфер обмена;
+7. Кнопка пишет Скопировано в буфер обмена;
+8. при выходе из программы возникает окно, которое позволяет при нажатии на Yes сохранить текст из TextBox в файл.
+*/
+
+/*  
+За пример возьмем строки:
+
+Вовсе все равноправны все равно, все равно еще 
+Вовсе все равноправны все равно, все равно еще
+Вовсе все равноправны все равно, все равно еще,
+Вовсе все равноправны все равно, все равно еще.
+Еще еще
+еще Еще
+Еще все равно еще
+еще все равно Еще
+еще.
+еще  
+все равно
+*/
+
 using System.Drawing;
+using System.IO;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -42,6 +61,7 @@ namespace Correction_of_letters_in_words
                     return;
                 }
             }
+
             else
                 counterClick = 0;
 
@@ -56,11 +76,25 @@ namespace Correction_of_letters_in_words
 
                 if (line.Contains(" еще") || line.Contains("Еще") || line.StartsWith("еще"))
                 {
-                    if (line.StartsWith("еще ") || line.StartsWith("еще") || line.StartsWith("еще,") || line.StartsWith("еще.") || line.StartsWith("еще!") || line.StartsWith("еще?"))
-                        stringToTextBox[counter] = line.Replace(" еще", " ещё").Replace("еще ", "ещё ").Replace("Еще", "Ещё").Replace("еще,", "ещё,").Replace("еще.", "ещё.").Replace("еще!", "ещё!").Replace("еще?", "ещё?");
+                    if (line.StartsWith("еще") || line.StartsWith("Еще"))
+                    {
+                        if (line.StartsWith("еще"))
+                        {
+                            stringToTextBox[counter] = line.Remove(0, 3);
+                            stringToTextBox[counter] = stringToTextBox[counter].Insert(0, "ещё").Replace(" Еще", " Ещё").Replace(" еще", " ещё");
+                        }
+
+                        else
+                        {
+                            stringToTextBox[counter] = line.Remove(0, 3);
+                            stringToTextBox[counter] = stringToTextBox[counter].Insert(0, "Ещё").Replace(" Еще", " Ещё").Replace(" еще", " ещё");
+                        }
+                    }
+
                     else
-                        stringToTextBox[counter] = line.Replace(" еще", " ещё").Replace("Еще", "Ещё");
+                        stringToTextBox[counter] = line.Replace(" еще", " ещё").Replace(" Еще", " Ещё");
                 }
+
                 else
                     stringToTextBox[counter] = line;
 
@@ -110,6 +144,7 @@ namespace Correction_of_letters_in_words
                                             stringToTextBox[counter] = stringToTextBox[counter].Insert(indexer - 9, tempStringForButton1_ClickForeachCh.Replace("все равно", "всё равно").Replace("Все равно", "Всё равно"));
                                             tempStringForButton1_ClickForeachCh = "";
                                         }
+
                                         else
                                         {
                                             stringToTextBox[counter] = stringToTextBox[counter].Remove(indexer - 9, 9);
@@ -127,6 +162,7 @@ namespace Correction_of_letters_in_words
                                         stringToTextBox[counter] = stringToTextBox[counter].Insert(indexer - 10, tempStringForButton1_ClickForeachCh.Replace("все равно", "всё равно").Replace("Все равно", "Всё равно"));
                                         tempStringForButton1_ClickForeachCh = "";
                                     }
+
                                     else
                                     {
                                         stringToTextBox[counter] = stringToTextBox[counter].Remove(indexer - 10, 9);
@@ -182,7 +218,7 @@ namespace Correction_of_letters_in_words
                     textBox1.Lines = stringToTextBox;
                     stringToTextBox = null;
                     await Task.Delay(2000);
-                    button1.BackColor = Color.LightGreen;
+                    button1.BackColor = Color.Bisque;
                     button1.Text = "Скопировать исправленный текст";
                 }
             }
@@ -200,6 +236,30 @@ namespace Correction_of_letters_in_words
             {
                 button1.BackColor = SystemColors.ControlLight;
                 button1.Text = "Исправить";
+            }
+        }
+
+        private void TextBox1_DragEnter(object sender, DragEventArgs e)
+        {
+            e.Effect = DragDropEffects.Copy;
+            textBox1.Text = e.Data.GetData(DataFormats.Text).ToString();
+        }
+
+        async void Form1_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            string path = @"D:\1\CorrectionOfLettersInWords.txt";
+
+            if (button1.Text == "Исправлено")
+            {
+                DialogResult saveOrClose = MessageBox.Show($"Сохранить исправленный текст по пути {path}?", "Сохранение текста в файл", MessageBoxButtons.YesNo, MessageBoxIcon.Asterisk);
+
+                if (saveOrClose == DialogResult.Yes)
+                {
+                    using (StreamWriter streamWriter = new StreamWriter(path, false))
+                    {
+                        await streamWriter.WriteAsync(textBox1.Text);
+                    }
+                }
             }
         }
     }
