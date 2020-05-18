@@ -45,6 +45,7 @@
             this.button1.TabIndex = 0;
             this.button1.Text = "Исправить";
             this.button1.UseVisualStyleBackColor = false;
+            this.button1.Click += new System.EventHandler(this.Button1_Click);
             // 
             // textBox1
             // 
@@ -53,7 +54,6 @@
             this.textBox1.Name = "textBox1";
             this.textBox1.Size = new System.Drawing.Size(498, 344);
             this.textBox1.TabIndex = 1;
-            this.textBox1.Click += new System.EventHandler(this.Button1_Click);
             this.textBox1.TextChanged += new System.EventHandler(this.TextBox1_TextChanged);
             // 
             // Form1
