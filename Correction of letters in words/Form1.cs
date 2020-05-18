@@ -54,10 +54,10 @@ namespace Correction_of_letters_in_words
             {
                 stringToTextBox[counter] = "";
 
-                if (line.Contains(" еще") || line.Contains("Еще"))
+                if (line.Contains(" еще") || line.Contains("Еще") || line.StartsWith("еще"))
                 {
-                    if (line.StartsWith("еще "))
-                        stringToTextBox[counter] = line.Replace(" еще", " ещё").Replace("еще ", "ещё ").Replace("Еще", "Ещё");
+                    if (line.StartsWith("еще ") || line.StartsWith("еще") || line.StartsWith("еще,") || line.StartsWith("еще.") || line.StartsWith("еще!") || line.StartsWith("еще?"))
+                        stringToTextBox[counter] = line.Replace(" еще", " ещё").Replace("еще ", "ещё ").Replace("Еще", "Ещё").Replace("еще,", "ещё,").Replace("еще.", "ещё.").Replace("еще!", "ещё!").Replace("еще?", "ещё?");
                     else
                         stringToTextBox[counter] = line.Replace(" еще", " ещё").Replace("Еще", "Ещё");
                 }
