@@ -8,4 +8,8 @@
 >6. Кнопка пишет Скопировано в буфер обмена.*/
 
 Подытог: вот такенный майндфак на выходе
->![]()
+>![](Correction%20of%20letters%20in%20words/Program_output.gif)
+
+Буфер обмена после работы программы
+
+>![](Correction%20of%20letters%20in%20words/Program_output_clipboard.jpg)
