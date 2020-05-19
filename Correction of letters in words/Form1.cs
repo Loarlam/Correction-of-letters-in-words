@@ -23,7 +23,7 @@
 Еще все равно еще
 еще все равно Еще
 еще.
-еще  
+еще 
 все равно
 */
 
@@ -37,7 +37,7 @@ namespace Correction_of_letters_in_words
     public partial class Form1 : Form
     {
         string tempStringForButton1_ClickForeachCh = "", stringForTextBox1_TextChangedEqual = "";
-        bool qq = false; // придумать имя и дать действие в событии закрытия формы
+        bool confirmsTextSaving = false;
 
         public Form1()
         {
@@ -54,7 +54,7 @@ namespace Correction_of_letters_in_words
                 {
                     button1.BackColor = Color.Bisque;
                     button1.Text = "Скопировано в буфер обмена";
-                    await Task.Delay(2000);
+                    await Task.Delay(800);
                     button1.BackColor = Color.LightGreen;
                     button1.Text = "Исправлено";
                     return;
@@ -88,7 +88,7 @@ namespace Correction_of_letters_in_words
                     else
                         stringToTextBox[counter] = line.Replace(" еще", " ещё").Replace(" Еще", " Ещё");
 
-                    qq = true;
+                    confirmsTextSaving = true;
                 }
 
                 else
@@ -196,7 +196,7 @@ namespace Correction_of_letters_in_words
                         }
                     }
 
-                    qq = true;
+                    confirmsTextSaving = true;
                 }
 
                 if (textBox1.Lines.Length - 1 != counter)
@@ -215,15 +215,15 @@ namespace Correction_of_letters_in_words
                 button1.BackColor = Color.IndianRed;
                 button1.Text = "Нечего исправлять";
 
-                if (((string.Join("\r\n", stringToTextBox) == string.Join("\r\n", textBox1.Lines)) 
+                if (((string.Join("\r\n", stringToTextBox) == string.Join("\r\n", textBox1.Lines))
                     && !string.IsNullOrWhiteSpace(stringForTextBox1_TextChangedEqual))
-                    && (stringForTextBox1_TextChangedEqual.Contains("ещё") 
+                    && (stringForTextBox1_TextChangedEqual.Contains("ещё")
                     || stringForTextBox1_TextChangedEqual.Contains("Ещё")
                     || stringForTextBox1_TextChangedEqual.Contains("всё равно")
                     || stringForTextBox1_TextChangedEqual.Contains("Всё равно")))
-                    qq = true;
+                    confirmsTextSaving = true;
                 else
-                    qq = false;
+                    confirmsTextSaving = false;
             }
 
             else
@@ -231,10 +231,10 @@ namespace Correction_of_letters_in_words
                 button1.BackColor = Color.LightGreen;
                 button1.Text = "Исправлено";
                 textBox1.Lines = stringToTextBox;
-                await Task.Delay(2000);
+                await Task.Delay(800);
                 button1.BackColor = Color.Bisque;
                 button1.Text = "Скопировать исправленный текст";
-                qq = true;
+                confirmsTextSaving = true;
             }
         }
 
@@ -257,7 +257,7 @@ namespace Correction_of_letters_in_words
         {
             string path = @"D:\1\CorrectionOfLettersInWords.txt";
 
-            if (button1.Text.Contains("Исправлено") || button1.Text.Contains("Скопировать исправленный текст"))
+            if (button1.Text.Contains("Исправлено") || button1.Text.Contains("Скопировать исправленный текст") || confirmsTextSaving)
             {
                 DialogResult saveOrClose = MessageBox.Show($"Сохранить исправленный текст по пути {path}?", "Сохранение текста в файл", MessageBoxButtons.YesNo, MessageBoxIcon.Asterisk);
 
