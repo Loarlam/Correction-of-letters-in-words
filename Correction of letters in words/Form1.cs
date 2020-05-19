@@ -205,12 +205,7 @@ namespace Correction_of_letters_in_words
 
             stringForTextBox1_TextChangedEqual = string.Join("\r\n", stringToTextBox);
 
-            if (string.IsNullOrWhiteSpace(stringForTextBox1_TextChangedEqual)
-               || ((stringForTextBox1_TextChangedEqual.Contains("ещё")
-               || stringForTextBox1_TextChangedEqual.Contains("Ещё")
-               || stringForTextBox1_TextChangedEqual.Contains("всё равно")
-               || stringForTextBox1_TextChangedEqual.Contains("Всё равно")) == false)
-               || (string.Join("\r\n", stringToTextBox) == string.Join("\r\n", textBox1.Lines)))
+            if (string.IsNullOrWhiteSpace(stringForTextBox1_TextChangedEqual) || (string.Join("\r\n", stringToTextBox) == string.Join("\r\n", textBox1.Lines)))
             {
                 button1.BackColor = Color.IndianRed;
                 button1.Text = "Нечего исправлять";
