@@ -89,7 +89,7 @@ namespace Correction_of_letters_in_words
                         stringToTextBox[counter] = line.Replace(" еще", " ещё").Replace(" Еще", " Ещё");
 
                     qq = true;
-                }  //
+                }
 
                 else
                     stringToTextBox[counter] = line;
@@ -197,7 +197,7 @@ namespace Correction_of_letters_in_words
                     }
 
                     qq = true;
-                } //
+                }
 
                 if (textBox1.Lines.Length - 1 != counter)
                     counter++;
