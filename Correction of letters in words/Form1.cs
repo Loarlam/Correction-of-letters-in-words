@@ -216,8 +216,8 @@ namespace Correction_of_letters_in_words
                 button1.BackColor = Color.IndianRed;
                 button1.Text = "Нечего исправлять";
             }
-
-            else if (button1.Text.Contains("Исправить") && (StringForTextBox1_TextChangedEqual.Contains("Всё равно") || StringForTextBox1_TextChangedEqual.Contains("всё равно") || StringForTextBox1_TextChangedEqual.Contains("Ещё") || StringForTextBox1_TextChangedEqual.Contains("ещё")))
+            
+            else
             {
                 button1.BackColor = Color.LightGreen;
                 button1.Text = "Исправлено";
@@ -226,12 +226,6 @@ namespace Correction_of_letters_in_words
                 await Task.Delay(2000);
                 button1.BackColor = Color.Bisque;
                 button1.Text = "Скопировать исправленный текст";
-            }
-
-            else
-            {
-                button1.BackColor = Color.IndianRed;
-                button1.Text = "Нечего исправлять";
             }
         }
 
