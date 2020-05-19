@@ -36,8 +36,8 @@ namespace Correction_of_letters_in_words
 {
     public partial class Form1 : Form
     {
-        byte counterClick;
-        string tempStringForButton1_ClickForeachCh = "", StringForTextBox1_TextChangedEqual = "";
+        string tempStringForButton1_ClickForeachCh = "", stringForTextBox1_TextChangedEqual = "";
+        bool qq = false;
 
         public Form1()
         {
@@ -46,7 +46,7 @@ namespace Correction_of_letters_in_words
 
         async void Button1_Click(object sender, System.EventArgs e)
         {
-            if (counterClick == 1 && button1.Text == "Скопировать исправленный текст")
+            if (button1.Text.Contains("Скопировать исправленный текст"))
             {
                 Clipboard.SetDataObject(textBox1.Text, true);
 
@@ -54,18 +54,12 @@ namespace Correction_of_letters_in_words
                 {
                     button1.BackColor = Color.Bisque;
                     button1.Text = "Скопировано в буфер обмена";
-                    counterClick = 0;
                     await Task.Delay(2000);
                     button1.BackColor = Color.LightGreen;
                     button1.Text = "Исправлено";
                     return;
                 }
             }
-
-            else
-                counterClick = 0;
-
-            counterClick++;
 
             string[] stringToTextBox = new string[textBox1.Lines.Length];
             byte counter = 0;
@@ -93,7 +87,9 @@ namespace Correction_of_letters_in_words
 
                     else
                         stringToTextBox[counter] = line.Replace(" еще", " ещё").Replace(" Еще", " Ещё");
-                }
+
+                    qq = true;
+                }  //
 
                 else
                     stringToTextBox[counter] = line;
@@ -199,18 +195,30 @@ namespace Correction_of_letters_in_words
                                 break;
                         }
                     }
-                }
+
+                    qq = true;
+                } //
 
                 if (textBox1.Lines.Length - 1 != counter)
                     counter++;
             }
 
-            StringForTextBox1_TextChangedEqual = string.Join("\r\n", stringToTextBox);
+            stringForTextBox1_TextChangedEqual = string.Join("\r\n", stringToTextBox);
 
-            if (string.Join("\r\n", stringToTextBox) == string.Join("\r\n", textBox1.Lines))
+            if (string.IsNullOrWhiteSpace(stringForTextBox1_TextChangedEqual) ||
+                ((stringForTextBox1_TextChangedEqual.Contains("ещё") ||
+                stringForTextBox1_TextChangedEqual.Contains("Ещё") ||
+                stringForTextBox1_TextChangedEqual.Contains("всё равно") ||
+                stringForTextBox1_TextChangedEqual.Contains("Всё равно")) == false) ||
+                (string.Join("\r\n", stringToTextBox) == string.Join("\r\n", textBox1.Lines)))
             {
                 button1.BackColor = Color.IndianRed;
                 button1.Text = "Нечего исправлять";
+
+                if (string.Join("\r\n", stringToTextBox) == string.Join("\r\n", textBox1.Lines))
+                    qq = true;
+                else
+                    qq = false;
             }
 
             else
@@ -221,12 +229,13 @@ namespace Correction_of_letters_in_words
                 await Task.Delay(2000);
                 button1.BackColor = Color.Bisque;
                 button1.Text = "Скопировать исправленный текст";
+                qq = true;
             }
         }
 
         void TextBox1_TextChanged(object sender, System.EventArgs e)
         {
-            if (textBox1.Text != StringForTextBox1_TextChangedEqual)
+            if (textBox1.Text != stringForTextBox1_TextChangedEqual)
             {
                 button1.BackColor = SystemColors.ControlLight;
                 button1.Text = "Исправить";
