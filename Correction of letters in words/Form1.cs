@@ -67,10 +67,10 @@ namespace Correction_of_letters_in_words
 
             counterClick++;
 
-            string[] lines = textBox1.Lines, stringToTextBox = new string[lines.Length];
+            string[] stringToTextBox = new string[textBox1.Lines.Length];
             byte counter = 0;
 
-            foreach (string line in lines)
+            foreach (string line in textBox1.Lines)
             {
                 stringToTextBox[counter] = "";
 
@@ -96,9 +96,7 @@ namespace Correction_of_letters_in_words
                 }
 
                 else
-                {
                     stringToTextBox[counter] = line;
-                }
 
                 if (line.Contains(" все равно") || line.Contains("Все равно") || line.StartsWith("все равно"))
                 {
@@ -201,28 +199,25 @@ namespace Correction_of_letters_in_words
                                 break;
                         }
                     }
-                }                
-
-                if (lines.Length - 1 != counter)
-                {
-                    counter++;
                 }
+
+                if (textBox1.Lines.Length - 1 != counter)
+                    counter++;
             }
 
             StringForTextBox1_TextChangedEqual = string.Join("\r\n", stringToTextBox);
 
-            if (string.Join("\r\n", stringToTextBox) == string.Join("\r\n", lines))
+            if (string.Join("\r\n", stringToTextBox) == string.Join("\r\n", textBox1.Lines))
             {
                 button1.BackColor = Color.IndianRed;
                 button1.Text = "Нечего исправлять";
             }
-            
+
             else
             {
                 button1.BackColor = Color.LightGreen;
                 button1.Text = "Исправлено";
                 textBox1.Lines = stringToTextBox;
-                stringToTextBox = null;
                 await Task.Delay(2000);
                 button1.BackColor = Color.Bisque;
                 button1.Text = "Скопировать исправленный текст";
