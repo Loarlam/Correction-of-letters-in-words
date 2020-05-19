@@ -31,7 +31,6 @@
 
 using System.Drawing;
 using System.IO;
-using System.Security.AccessControl;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -264,11 +263,11 @@ namespace Correction_of_letters_in_words
                     if (!Directory.Exists(path.Replace(@"1\CorrectionOfLettersInWords.txt", @"1")))
                     {
                         Directory.CreateDirectory(path.Replace(@"1\CorrectionOfLettersInWords.txt", @"1"));
-                    }                    
+                    }
 
                     using (StreamWriter streamWriter = new StreamWriter(path, false))
                     {
-                        
+
                         await streamWriter.WriteAsync(textBox1.Text);
                     }
                 }
