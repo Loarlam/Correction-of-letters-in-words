@@ -37,7 +37,7 @@ namespace Correction_of_letters_in_words
     public partial class Form1 : Form
     {
         byte counterClick;
-        string tempStringForButton1_ClickForeachCh = "", tempStringForTextBox1_TextChangedEqual = "";
+        string tempStringForButton1_ClickForeachCh = "", StringForTextBox1_TextChangedEqual = "";
 
         public Form1()
         {
@@ -96,7 +96,9 @@ namespace Correction_of_letters_in_words
                 }
 
                 else
+                {
                     stringToTextBox[counter] = line;
+                }
 
                 if (line.Contains(" все равно") || line.Contains("Все равно") || line.StartsWith("все равно"))
                 {
@@ -199,7 +201,7 @@ namespace Correction_of_letters_in_words
                                 break;
                         }
                     }
-                }
+                }                
 
                 if (lines.Length - 1 != counter)
                 {
@@ -207,20 +209,23 @@ namespace Correction_of_letters_in_words
                 }
             }
 
-            tempStringForTextBox1_TextChangedEqual = string.Join("\r\n", stringToTextBox);
+            StringForTextBox1_TextChangedEqual = string.Join("\r\n", stringToTextBox);
 
-            if (tempStringForTextBox1_TextChangedEqual.Contains("Всё равно") || tempStringForTextBox1_TextChangedEqual.Contains("всё равно") || tempStringForTextBox1_TextChangedEqual.Contains("Ещё") || tempStringForTextBox1_TextChangedEqual.Contains("ещё"))
+            if (string.Join("\r\n", stringToTextBox) == string.Join("\r\n", lines))
             {
-                if (button1.Text != "Исправлено")
-                {
-                    button1.BackColor = Color.LightGreen;
-                    button1.Text = "Исправлено";
-                    textBox1.Lines = stringToTextBox;
-                    stringToTextBox = null;
-                    await Task.Delay(2000);
-                    button1.BackColor = Color.Bisque;
-                    button1.Text = "Скопировать исправленный текст";
-                }
+                button1.BackColor = Color.IndianRed;
+                button1.Text = "Нечего исправлять";
+            }
+
+            else if (button1.Text.Contains("Исправить") && (StringForTextBox1_TextChangedEqual.Contains("Всё равно") || StringForTextBox1_TextChangedEqual.Contains("всё равно") || StringForTextBox1_TextChangedEqual.Contains("Ещё") || StringForTextBox1_TextChangedEqual.Contains("ещё")))
+            {
+                button1.BackColor = Color.LightGreen;
+                button1.Text = "Исправлено";
+                textBox1.Lines = stringToTextBox;
+                stringToTextBox = null;
+                await Task.Delay(2000);
+                button1.BackColor = Color.Bisque;
+                button1.Text = "Скопировать исправленный текст";
             }
 
             else
@@ -232,14 +237,14 @@ namespace Correction_of_letters_in_words
 
         void TextBox1_TextChanged(object sender, System.EventArgs e)
         {
-            if (textBox1.Text != tempStringForTextBox1_TextChangedEqual)
+            if (textBox1.Text != StringForTextBox1_TextChangedEqual)
             {
                 button1.BackColor = SystemColors.ControlLight;
                 button1.Text = "Исправить";
             }
         }
 
-        private void TextBox1_DragEnter(object sender, DragEventArgs e)
+        void TextBox1_DragEnter(object sender, DragEventArgs e)
         {
             e.Effect = DragDropEffects.Copy;
             textBox1.Text = e.Data.GetData(DataFormats.Text).ToString();
@@ -249,7 +254,7 @@ namespace Correction_of_letters_in_words
         {
             string path = @"D:\1\CorrectionOfLettersInWords.txt";
 
-            if (button1.Text == "Исправлено")
+            if (button1.Text.Contains("Исправлено") || button1.Text.Contains("Скопировать исправленный текст"))
             {
                 DialogResult saveOrClose = MessageBox.Show($"Сохранить исправленный текст по пути {path}?", "Сохранение текста в файл", MessageBoxButtons.YesNo, MessageBoxIcon.Asterisk);
 
