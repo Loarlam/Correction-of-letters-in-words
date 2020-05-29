@@ -44,6 +44,71 @@ namespace Correction_of_letters_in_words
         public Form1()
         {
             InitializeComponent();
+
+            FormClosing += async (s, e) =>
+            {
+                string path = @"D:\1\CorrectionOfLettersInWords.txt";
+
+                if (button1.Text.Contains("Исправлено") || button1.Text.Contains("Скопировать исправленный текст") || confirmsTextSaving)
+                {
+                    DialogResult saveOrClose = MessageBox.Show($"Сохранить исправленный текст по пути {path}?", "Сохранение текста в файл", MessageBoxButtons.YesNo, MessageBoxIcon.Asterisk);
+
+                    if (saveOrClose == DialogResult.Yes)
+                    {
+                        if (!Directory.Exists(path.Replace(@"1\CorrectionOfLettersInWords.txt", @"1")))
+                        {
+                            Directory.CreateDirectory(path.Replace(@"1\CorrectionOfLettersInWords.txt", @"1"));
+                        }
+
+                        using (StreamWriter streamWriter = new StreamWriter(path, false))
+                        {
+                            await streamWriter.WriteAsync(textBox1.Text);
+                        }
+                    }
+                }
+            };
+
+            Load += (s, e) =>
+             {
+                 notifyIcon1.BalloonTipTitle = "Замена \"все равно / еще\" на  \"всё равно / ещё\"";
+                 notifyIcon1.BalloonTipText = "Cвернуто";
+                 notifyIcon1.Text = "Замена \"все равно / еще\" на  \"всё равно / ещё\"";
+             };
+
+            Resize += (s, e) =>
+            {
+                if (WindowState == FormWindowState.Minimized)
+                {
+                    Hide();
+                    notifyIcon1.Visible = true;
+                    notifyIcon1.ShowBalloonTip(1000);
+                }
+
+                else if (WindowState == FormWindowState.Normal)
+                    notifyIcon1.Visible = true;
+            };
+
+            notifyIcon1.MouseDoubleClick += (s, e) =>
+            {
+                Show();
+                notifyIcon1.Visible = true;
+                WindowState = FormWindowState.Normal;
+            };
+
+            textBox1.DragEnter += (s, e) =>
+            {
+                e.Effect = DragDropEffects.Copy;
+                textBox1.Text = e.Data.GetData(DataFormats.Text).ToString();
+            };
+
+            textBox1.TextChanged += (s, e) =>
+              {
+                  if (textBox1.Text != stringForTextBox1_TextChangedEqual)
+                  {
+                      button1.BackColor = SystemColors.ControlLight;
+                      button1.Text = "Исправить";
+                  }
+              };
         }
 
         async void Button1_Click(object sender, System.EventArgs e)
@@ -232,45 +297,6 @@ namespace Correction_of_letters_in_words
                 button1.BackColor = Color.Bisque;
                 button1.Text = "Скопировать исправленный текст";
                 confirmsTextSaving = true;
-            }
-        }
-
-        void TextBox1_TextChanged(object sender, System.EventArgs e)
-        {
-            if (textBox1.Text != stringForTextBox1_TextChangedEqual)
-            {
-                button1.BackColor = SystemColors.ControlLight;
-                button1.Text = "Исправить";
-            }
-        }
-
-        void TextBox1_DragEnter(object sender, DragEventArgs e)
-        {
-            e.Effect = DragDropEffects.Copy;
-            textBox1.Text = e.Data.GetData(DataFormats.Text).ToString();
-        }
-
-        async void Form1_FormClosing(object sender, FormClosingEventArgs e)
-        {
-            string path = @"D:\1\CorrectionOfLettersInWords.txt";
-
-            if (button1.Text.Contains("Исправлено") || button1.Text.Contains("Скопировать исправленный текст") || confirmsTextSaving)
-            {
-                DialogResult saveOrClose = MessageBox.Show($"Сохранить исправленный текст по пути {path}?", "Сохранение текста в файл", MessageBoxButtons.YesNo, MessageBoxIcon.Asterisk);
-
-                if (saveOrClose == DialogResult.Yes)
-                {
-                    if (!Directory.Exists(path.Replace(@"1\CorrectionOfLettersInWords.txt", @"1")))
-                    {
-                        Directory.CreateDirectory(path.Replace(@"1\CorrectionOfLettersInWords.txt", @"1"));
-                    }
-
-                    using (StreamWriter streamWriter = new StreamWriter(path, false))
-                    {
-
-                        await streamWriter.WriteAsync(textBox1.Text);
-                    }
-                }
             }
         }
     }
