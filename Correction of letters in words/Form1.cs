@@ -30,6 +30,7 @@
 все равно
 */
 
+using System;
 using System.Drawing;
 using System.IO;
 using System.Threading.Tasks;
@@ -39,17 +40,22 @@ namespace Correction_of_letters_in_words
 {
     public partial class Form1 : Form
     {
-        string tempStringForButton1_ClickForeachCh = "", stringForTextBox1_TextChangedEqual = "";
         bool confirmsTextSaving = false;
+        string tempStringForButton1_ClickForeachCh = "", stringForTextBox1_TextChangedEqual = "", path = @"D:\1\CorrectionOfLettersInWords.txt";
 
         public Form1()
         {
             InitializeComponent();
 
+            Load += (s, e) =>
+             {
+                 notifyIcon1.BalloonTipTitle = "Замена \"все равно / еще\" на  \"всё равно / ещё\"";
+                 notifyIcon1.BalloonTipText = "Cвернуто";
+                 notifyIcon1.Text = "Замена \"все равно / еще\" на  \"всё равно / ещё\"";
+             };
+
             FormClosing += async (s, e) =>
             {
-                string path = @"D:\1\CorrectionOfLettersInWords.txt";
-
                 if (button1.Text.Contains("Исправлено") || button1.Text.Contains("Скопировать исправленный текст") || confirmsTextSaving)
                 {
                     DialogResult saveOrClose = MessageBox.Show($"Сохранить исправленный текст по пути {path}?", "Сохранение текста в файл", MessageBoxButtons.YesNo, MessageBoxIcon.Asterisk);
@@ -68,13 +74,6 @@ namespace Correction_of_letters_in_words
                     }
                 }
             };
-
-            Load += (s, e) =>
-             {
-                 notifyIcon1.BalloonTipTitle = "Замена \"все равно / еще\" на  \"всё равно / ещё\"";
-                 notifyIcon1.BalloonTipText = "Cвернуто";
-                 notifyIcon1.Text = "Замена \"все равно / еще\" на  \"всё равно / ещё\"";
-             };
 
             Resize += (s, e) =>
             {
@@ -103,16 +102,18 @@ namespace Correction_of_letters_in_words
             };
 
             textBox1.TextChanged += (s, e) =>
-              {
-                  if (textBox1.Text != stringForTextBox1_TextChangedEqual)
-                  {
-                      button1.BackColor = SystemColors.ControlLight;
-                      button1.Text = "Исправить";
-                  }
-              };
+             {
+                 if (textBox1.Text != stringForTextBox1_TextChangedEqual)
+                 {
+                     button1.BackColor = SystemColors.ControlLight;
+                     button1.Text = "Исправить";
+                 }
+             };
+
+            closeToolStripMenuItem.Click += (s, e) => Close();
         }
 
-        async void Button1_Click(object sender, System.EventArgs e)
+        async void Button1_Click(object sender, EventArgs e)
         {
             if (button1.Text.Contains("Скопировать исправленный текст"))
             {
