@@ -33,6 +33,7 @@
 using System;
 using System.Drawing;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -41,7 +42,9 @@ namespace Correction_of_letters_in_words
     public partial class Form1 : Form
     {
         bool confirmsTextSaving = false;
-        string tempStringForButton1_ClickForeachCh = "", stringForTextBox1_TextChangedEqual = "", path = $@"C:\Users\{Environment.UserName}\Desktop\CorrectionOfLettersInWords.txt";
+        byte digitsInTheFileName;
+        string tempStringForButton1_ClickForeachCh = "", stringForTextBox1_TextChangedEqual = "", path = $@"C:\Users\{Environment.UserName}\Desktop\Fixed.txt";
+        string[] filesInFolder;
 
         public Form1()
         {
@@ -58,20 +61,32 @@ namespace Correction_of_letters_in_words
             {
                 if (button1.Text.Contains("Исправлено") || button1.Text.Contains("Скопировать исправленный текст") || confirmsTextSaving)
                 {
+                    filesInFolder = Directory.GetFiles($@"C:\Users\{Environment.UserName}\Desktop", "Fixed*");
+
+                    if (filesInFolder.Any())
+                    {
+                        if (filesInFolder[filesInFolder.Length - 1].Contains("Fixed.txt"))
+                            path = $@"C:\Users\{Environment.UserName}\Desktop\Fixed1.txt";
+                        else
+                        {
+                            filesInFolder[filesInFolder.Length - 1] = filesInFolder[filesInFolder.Length - 1].Substring(filesInFolder[filesInFolder.Length - 1].IndexOf('d') + 1);
+                            digitsInTheFileName = Convert.ToByte(filesInFolder[filesInFolder.Length - 1].Remove(filesInFolder[filesInFolder.Length - 1].IndexOf('.')));
+                            path = $@"C:\Users\{Environment.UserName}\Desktop\Fixed{++digitsInTheFileName}.txt";
+                        }
+                    }
+
                     DialogResult saveOrClose = MessageBox.Show($"Сохранить исправленный текст по пути {path}?", "Сохранение текста в файл", MessageBoxButtons.YesNo, MessageBoxIcon.Asterisk);
 
                     if (saveOrClose == DialogResult.Yes)
                     {
                         /*Создание пути под файл, если путь отсутствует. По дефолту - рабочий стол*/
-                        //if (!Directory.Exists(path.Replace(@"Desktop\CorrectionOfLettersInWords.txt", @"Desktop")))
+                        //if (!Directory.Exists(path.Replace(@"Desktop\Fixed.txt", @"Desktop")))
                         //{
-                        //    Directory.CreateDirectory(path.Replace(@"Desktop\CorrectionOfLettersInWords.txt", @"Desktop"));
+                        //    Directory.CreateDirectory(path.Replace(@"Desktop\Fixed.txt", @"Desktop"));
                         //}
 
                         using (StreamWriter streamWriter = new StreamWriter(path, false))
-                        {
                             await streamWriter.WriteAsync(textBox1.Text);
-                        }
                     }
                 }
             };
@@ -179,6 +194,8 @@ namespace Correction_of_letters_in_words
                             case 'в':
                                 if (tempStringForButton1_ClickForeachCh.StartsWith("все ра"))
                                     tempStringForButton1_ClickForeachCh += ch.ToString();
+                                else if (tempStringForButton1_ClickForeachCh != null)
+                                    tempStringForButton1_ClickForeachCh = ch.ToString();
                                 else
                                     tempStringForButton1_ClickForeachCh += ch.ToString();
                                 break;
