@@ -11,7 +11,8 @@
 8. кнопка пишет «скопировано в буфер обмена»;
 9. если пользователь после исправления текста лупит по Button, или TextBox пуст или содержит пробел, или пользователь вбил набор символов, 
 которые не соответствуют «еще / все равно», то Button должен поменять значение на «нечего исправлять»
-10. при выходе из программы возникает окно, позволяющее при нажатии на «yes» сохранить текст из TextBox в файл, а на «no» закрывает программу.
+10. при выходе из программы возникает окно, позволяющее при нажатии на «yes» сохранить текст из TextBox в файл, а на «no» закрывает программу;
+11. дать пользователю возможность сохранять результаты своих действий в разные файлы на рабочий стол.
 */
 
 /*  
@@ -79,12 +80,6 @@ namespace Correction_of_letters_in_words
 
                     if (saveOrClose == DialogResult.Yes)
                     {
-                        /*Создание пути под файл, если путь отсутствует. По дефолту - рабочий стол*/
-                        //if (!Directory.Exists(path.Replace(@"Desktop\Fixed.txt", @"Desktop")))
-                        //{
-                        //    Directory.CreateDirectory(path.Replace(@"Desktop\Fixed.txt", @"Desktop"));
-                        //}
-
                         using (StreamWriter streamWriter = new StreamWriter(path, false))
                             await streamWriter.WriteAsync(textBox1.Text);
                     }
