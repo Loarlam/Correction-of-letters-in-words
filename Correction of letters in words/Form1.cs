@@ -41,7 +41,7 @@ namespace Correction_of_letters_in_words
     public partial class Form1 : Form
     {
         bool confirmsTextSaving = false;
-        string tempStringForButton1_ClickForeachCh = "", stringForTextBox1_TextChangedEqual = "", path = @"D:\1\CorrectionOfLettersInWords.txt";
+        string tempStringForButton1_ClickForeachCh = "", stringForTextBox1_TextChangedEqual = "", path = $@"C:\Users\{Environment.UserName}\Desktop\CorrectionOfLettersInWords.txt";
 
         public Form1()
         {
@@ -62,10 +62,11 @@ namespace Correction_of_letters_in_words
 
                     if (saveOrClose == DialogResult.Yes)
                     {
-                        if (!Directory.Exists(path.Replace(@"1\CorrectionOfLettersInWords.txt", @"1")))
-                        {
-                            Directory.CreateDirectory(path.Replace(@"1\CorrectionOfLettersInWords.txt", @"1"));
-                        }
+                        /*Создание пути под файл, если путь отсутствует. По дефолту - рабочий стол*/
+                        //if (!Directory.Exists(path.Replace(@"Desktop\CorrectionOfLettersInWords.txt", @"Desktop")))
+                        //{
+                        //    Directory.CreateDirectory(path.Replace(@"Desktop\CorrectionOfLettersInWords.txt", @"Desktop"));
+                        //}
 
                         using (StreamWriter streamWriter = new StreamWriter(path, false))
                         {
