@@ -52,7 +52,7 @@ namespace Correction_of_letters_in_words
                     || textBox1.Text.Contains("всё равно")
                     || textBox1.Text.Contains("Всё равно")))
                 {
-                    Button1_Click(s, e);
+                    
                     filesInFolder = Directory.GetFiles($@"C:\Users\{Environment.UserName}\Desktop", "Fixed*");
 
                     if (filesInFolder.Any())
@@ -73,8 +73,9 @@ namespace Correction_of_letters_in_words
                     {
                         using (StreamWriter streamWriter = new StreamWriter(path))
                         {
-                            while (Clipboard.GetText() != textBox1.Text)
-                                Clipboard.SetDataObject(textBox1.Text, true);
+                            Button1_Click(s, e);
+
+                            Clipboard.SetDataObject(textBox1.Text, true);
 
                             await streamWriter.WriteAsync(Clipboard.GetText(TextDataFormat.UnicodeText));
                         }
@@ -285,11 +286,14 @@ namespace Correction_of_letters_in_words
                         button1.BackColor = Color.White;
                         button1.Text = "Исправлено";
                         textBox1.Lines = stringToTextBox;
+
+                        await Task.Delay(1000);
+
                         Clipboard.SetDataObject(textBox1.Text, true);
                         button1.BackColor = Color.Bisque;
                         button1.Text = "Скопировано в буфер обмена";
 
-                        await Task.Delay(800);
+                        await Task.Delay(1000);
 
                         button1.BackColor = Color.White;
                         button1.Text = "Исправлено";
@@ -321,11 +325,14 @@ namespace Correction_of_letters_in_words
                 button1.BackColor = Color.White;
                 button1.Text = "Исправлено";
                 textBox1.Lines = stringToTextBox;
+
+                await Task.Delay(1000);
+
                 Clipboard.SetDataObject(textBox1.Text, true);
                 button1.BackColor = Color.Bisque;
                 button1.Text = "Скопировано в буфер обмена";
 
-                await Task.Delay(800);
+                await Task.Delay(1000);
 
                 button1.BackColor = Color.White;
                 button1.Text = "Исправлено";
