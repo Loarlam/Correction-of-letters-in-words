@@ -1,27 +1,4 @@
-﻿/*  
-Задание:
-
-1. сделать плавное появление окна при запуске программы;
-2. необходимо сделать программу, в которой должен быть TextBox, Button, NotifyIcon, ContextMenuStrip, Icon, ScrollBar;
-3. программа должна уметь сворачиваться в трей и разворачиваться обратно;
-4. пользователь должен вставить в поле любую статью или цитату из интернета;
-5. нажатие на кнопку «Исправить» заменяет слова "еще на ещё" / "все равно на всё равно";
-6. кнопка «Исправить» должна менять текст на «Исправлено» после исправления, а также меняются цвет Button на White и Form.BackColor на LightGreen;
-7. спустя пару секунд или миллисекунд на кнопке должно быть написано «Скопировать исправленный текст», а цвет Button меняется на Bisque;
-8. текст, исправленный в поле TextBox, должен лететь в буфер обмена;
-9. кнопка пишет «Скопировано в буфер обмена», при этом цвет Button остаётся Bisque;
-10. Button должен поменять значение на «Нечего исправлять», а также меняются цвет Button на White и Form.BackColor на IndianRed, если: текст уже исправлен, 
-а пользователь лупит по Button повторно; TextBox пуст или содержит только пробел / пробелы; пользователь вбил набор символов, которые не соответствуют «еще / все равно»;
-11. если пользователь решает внести изменения в TextBox, то Button меняет текст на "Исправить", а также меняются цвет Button на ColorLight и Form.BackColor на White;
-12. выход из программы возможен по нажатию на кнопку закрытия формы, либо же кликом по полю "Закрыть" иконки в трей, либо же по ALT+F4;
-13. перед закрытием программы возникает окно, позволяющее при нажатии на «Да» сохранить текст из TextBox в файл на рабочий стол пользователя, а на «Нет» закрывает программу;
-14. если же пользователь ранее пользовался программой и имел сохраненный Fixed.txt на рабочем столе, 
-то при повторном использовании программы, и попытке сохранения результатов, создается новый файл, но с инкрементальной нумерацией в один шаг в названии файла.
-*/
-
-/*  
-За пример возьмем строки:
-
+﻿/*За пример возьмем строки ниже:
 Вовсе все равноправны все равно, все равно еще 
 Вовсе все равноправны все равно, все равно еще
 Вовсе все равноправны все равно, все равно еще,
@@ -36,6 +13,7 @@
 */
 
 using System;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -68,8 +46,13 @@ namespace Correction_of_letters_in_words
 
             FormClosing += async (s, e) =>
             {
-                if (button1.Text.Contains("Исправлено") || button1.Text.Contains("Скопировать исправленный текст") || confirmsTextSaving)
+                if ((button1.Text.Contains("Исправлено") || (button1.Text.Contains("Нечего исправлять") && confirmsTextSaving))
+                    || (textBox1.Text.Contains("ещё")
+                    || textBox1.Text.Contains("Ещё")
+                    || textBox1.Text.Contains("всё равно")
+                    || textBox1.Text.Contains("Всё равно")))
                 {
+                    Button1_Click(s, e);
                     filesInFolder = Directory.GetFiles($@"C:\Users\{Environment.UserName}\Desktop", "Fixed*");
 
                     if (filesInFolder.Any())
@@ -88,8 +71,15 @@ namespace Correction_of_letters_in_words
 
                     if (saveOrClose == DialogResult.Yes)
                     {
-                        using (StreamWriter streamWriter = new StreamWriter(path, false))
-                            await streamWriter.WriteAsync(textBox1.Text);
+                        using (StreamWriter streamWriter = new StreamWriter(path))
+                        {
+                            while (Clipboard.GetText() != textBox1.Text)
+                                Clipboard.SetDataObject(textBox1.Text, true);
+
+                            await streamWriter.WriteAsync(Clipboard.GetText(TextDataFormat.UnicodeText));
+                        }
+
+                        Process.Start(path);
                     }
                 }
             };
@@ -100,6 +90,8 @@ namespace Correction_of_letters_in_words
                 {
                     Hide();
                     notifyIcon1.Visible = true;
+                    notifyIcon1.BalloonTipTitle = "Замена \"все равно / еще\" на  \"всё равно / ещё\"";
+                    notifyIcon1.BalloonTipText = "Cвернуто";
                     notifyIcon1.ShowBalloonTip(1000);
                 }
 
@@ -135,21 +127,6 @@ namespace Correction_of_letters_in_words
 
         async void Button1_Click(object sender, EventArgs e)
         {
-            if (button1.Text.Contains("Скопировать исправленный текст"))
-            {
-                Clipboard.SetDataObject(textBox1.Text, true);
-
-                if (Clipboard.ContainsText())
-                {
-                    button1.BackColor = Color.Bisque;
-                    button1.Text = "Скопировано в буфер обмена";
-                    await Task.Delay(800);
-                    button1.BackColor = Color.White;
-                    button1.Text = "Исправлено";
-                    return;
-                }
-            }
-
             string[] stringToTextBox = new string[textBox1.Lines.Length];
             byte counter = 0;
 
@@ -176,8 +153,6 @@ namespace Correction_of_letters_in_words
 
                     else
                         stringToTextBox[counter] = line.Replace(" еще", " ещё").Replace(" Еще", " Ещё");
-
-                    confirmsTextSaving = true;
                 }
 
                 else
@@ -286,8 +261,6 @@ namespace Correction_of_letters_in_words
                                 break;
                         }
                     }
-
-                    confirmsTextSaving = true;
                 }
 
                 if (textBox1.Lines.Length - 1 != counter)
@@ -296,33 +269,66 @@ namespace Correction_of_letters_in_words
 
             stringForTextBox1_TextChangedEqual = string.Join("\r\n", stringToTextBox);
 
-            if (string.IsNullOrWhiteSpace(stringForTextBox1_TextChangedEqual) || (string.Join("\r\n", stringToTextBox) == string.Join("\r\n", textBox1.Lines)))
+            if (string.IsNullOrWhiteSpace(stringForTextBox1_TextChangedEqual) || (stringForTextBox1_TextChangedEqual == string.Join("\r\n", textBox1.Lines)))
             {
-                BackColor = Color.IndianRed;
-                button1.BackColor = Color.White;
-                button1.Text = "Нечего исправлять";
-
                 if (((string.Join("\r\n", stringToTextBox) == string.Join("\r\n", textBox1.Lines))
                     && !string.IsNullOrWhiteSpace(stringForTextBox1_TextChangedEqual))
                     && (stringForTextBox1_TextChangedEqual.Contains("ещё")
                     || stringForTextBox1_TextChangedEqual.Contains("Ещё")
                     || stringForTextBox1_TextChangedEqual.Contains("всё равно")
                     || stringForTextBox1_TextChangedEqual.Contains("Всё равно")))
-                    confirmsTextSaving = true;
+                {
+                    if (Clipboard.GetText() != stringForTextBox1_TextChangedEqual)
+                    {
+                        confirmsTextSaving = true;
+                        BackColor = Color.LightGreen;
+                        button1.BackColor = Color.White;
+                        button1.Text = "Исправлено";
+                        textBox1.Lines = stringToTextBox;
+                        Clipboard.SetDataObject(textBox1.Text, true);
+                        button1.BackColor = Color.Bisque;
+                        button1.Text = "Скопировано в буфер обмена";
+
+                        await Task.Delay(800);
+
+                        button1.BackColor = Color.White;
+                        button1.Text = "Исправлено";
+                    }
+
+                    else 
+                    {
+                        confirmsTextSaving = true;
+                        BackColor = Color.LightGreen;
+                        button1.BackColor = Color.White;
+                        button1.Text = "Исправлено";
+                    }
+                    
+                }
+
                 else
+                {
                     confirmsTextSaving = false;
+                    BackColor = Color.IndianRed;
+                    button1.BackColor = Color.White;
+                    button1.Text = "Нечего исправлять";
+                }
             }
 
             else
             {
+                confirmsTextSaving = true;
                 BackColor = Color.LightGreen;
                 button1.BackColor = Color.White;
                 button1.Text = "Исправлено";
                 textBox1.Lines = stringToTextBox;
-                await Task.Delay(800);
+                Clipboard.SetDataObject(textBox1.Text, true);
                 button1.BackColor = Color.Bisque;
-                button1.Text = "Скопировать исправленный текст";
-                confirmsTextSaving = true;
+                button1.Text = "Скопировано в буфер обмена";
+
+                await Task.Delay(800);
+
+                button1.BackColor = Color.White;
+                button1.Text = "Исправлено";
             }
         }
     }
