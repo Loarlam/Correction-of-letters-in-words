@@ -1,18 +1,23 @@
 ﻿/*  
 Задание:
 
-1. необходимо сделать программу, в которой должен быть TextBox и Button;
-2. программа должна уметь сворачиваться в трей и разворачиваться обратно;
-3. пользователь должен вставить в поле любую статью или цитату из интернета;
-4. нажатие на кнопку «исправить» исправит все слова: еще на ещё / все равно на всё равно;
-5. кнопка «исправить» должна писать «исправлено» после исправления.
-6. спустя пару секунд или миллисекунд, на кнопке должно быть написано «скопировать исправленный текст»;
-7. текст, исправленный в поле TextBox, должен лететь в буфер обмена;
-8. кнопка пишет «скопировано в буфер обмена»;
-9. если пользователь после исправления текста лупит по Button, или TextBox пуст или содержит пробел, или пользователь вбил набор символов, 
-которые не соответствуют «еще / все равно», то Button должен поменять значение на «нечего исправлять»
-10. при выходе из программы возникает окно, позволяющее при нажатии на «yes» сохранить текст из TextBox в файл, а на «no» закрывает программу;
-11. дать пользователю возможность сохранять результаты своих действий в разные файлы на рабочий стол.
+1. сделать плавное появление окна при запуске программы;
+2. необходимо сделать программу, в которой должен быть TextBox, Button, NotifyIcon, ContextMenuStrip, Icon, ScrollBar;
+3. программа должна уметь сворачиваться в трей и разворачиваться обратно;
+4. пользователь должен вставить в поле любую статью или цитату из интернета;
+5. нажатие на кнопку «Исправить» заменяет слова "еще на ещё" / "все равно на всё равно";
+6. кнопка «Исправить» должна менять текст на «Исправлено» после исправления, а также меняются цвет Button на White и Form.BackColor на LightGreen;
+7. спустя пару секунд или миллисекунд на кнопке должно быть написано «Скопировать исправленный текст», а цвет Button меняется на Bisque;
+8. текст, исправленный в поле TextBox, должен лететь в буфер обмена;
+9. кнопка пишет «Скопировано в буфер обмена», при этом цвет Button остаётся Bisque;
+10. Button должен поменять значение на «Нечего исправлять», а также меняются цвет Button на White и Form.BackColor на IndianRed, если: текст уже исправлен, 
+а пользователь лупит по Button повторно; TextBox пуст или содержит только пробел/ пробелы; 
+пользователь вбил набор символов, которые не соответствуют «еще / все равно»;
+11. если пользователь решает внести изменения в TextBox, то Button меняет текст на "Исправить", а также меняются цвет Button на ColorLight и Form.BackColor на White;
+12. выход из программы возможен по нажатию на кнопку закрытия формы, либо же кликом по полю "Закрыть" иконки в трей, либо же по ALT+F4;
+13. перед закрытием программы возникает окно, позволяющее при нажатии на «Да» сохранить текст из TextBox в файл на рабочий стол пользователя, а на «Нет» закрывает программу;
+14. если же пользователь ранее пользовался программой и имел сохраненный Fixed.txt на рабочем столе, 
+то при повторном использовании программы, и попытке сохранения результатов, создается новый файл, но с инкрементальной нумерацией в один шаг в названии файла.
 */
 
 /*  
@@ -51,11 +56,15 @@ namespace Correction_of_letters_in_words
         {
             InitializeComponent();
 
-            Load += (s, e) =>
+            Load += async (s, e) =>
              {
+                 for (Opacity = 0; Opacity <= 1; Opacity += .02)
+                     await Task.Delay(10);
+
                  notifyIcon1.BalloonTipTitle = "Замена \"все равно / еще\" на  \"всё равно / ещё\"";
                  notifyIcon1.BalloonTipText = "Cвернуто";
                  notifyIcon1.Text = "Замена \"все равно / еще\" на  \"всё равно / ещё\"";
+
              };
 
             FormClosing += async (s, e) =>
@@ -116,6 +125,7 @@ namespace Correction_of_letters_in_words
              {
                  if (textBox1.Text != stringForTextBox1_TextChangedEqual)
                  {
+                     BackColor = SystemColors.Window;
                      button1.BackColor = SystemColors.ControlLight;
                      button1.Text = "Исправить";
                  }
@@ -135,7 +145,7 @@ namespace Correction_of_letters_in_words
                     button1.BackColor = Color.Bisque;
                     button1.Text = "Скопировано в буфер обмена";
                     await Task.Delay(800);
-                    button1.BackColor = Color.LightGreen;
+                    button1.BackColor = Color.White;
                     button1.Text = "Исправлено";
                     return;
                 }
@@ -289,7 +299,8 @@ namespace Correction_of_letters_in_words
 
             if (string.IsNullOrWhiteSpace(stringForTextBox1_TextChangedEqual) || (string.Join("\r\n", stringToTextBox) == string.Join("\r\n", textBox1.Lines)))
             {
-                button1.BackColor = Color.IndianRed;
+                BackColor = Color.IndianRed;
+                button1.BackColor = Color.White;
                 button1.Text = "Нечего исправлять";
 
                 if (((string.Join("\r\n", stringToTextBox) == string.Join("\r\n", textBox1.Lines))
@@ -305,7 +316,8 @@ namespace Correction_of_letters_in_words
 
             else
             {
-                button1.BackColor = Color.LightGreen;
+                BackColor = Color.LightGreen;
+                button1.BackColor = Color.White;
                 button1.Text = "Исправлено";
                 textBox1.Lines = stringToTextBox;
                 await Task.Delay(800);

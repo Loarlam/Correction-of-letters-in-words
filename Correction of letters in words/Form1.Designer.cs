@@ -59,6 +59,7 @@
             this.textBox1.Location = new System.Drawing.Point(8, 12);
             this.textBox1.Multiline = true;
             this.textBox1.Name = "textBox1";
+            this.textBox1.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.textBox1.Size = new System.Drawing.Size(498, 344);
             this.textBox1.TabIndex = 1;
             // 
@@ -95,6 +96,8 @@
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;
             this.Name = "Form1";
+            this.Opacity = 0D;
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Замена \"все равно / еще\" на  \"всё равно / ещё\"";
             this.contextMenuStrip1.ResumeLayout(false);
             this.ResumeLayout(false);
