@@ -201,7 +201,7 @@ namespace Correction_of_letters_in_words
 
             if (string.IsNullOrWhiteSpace(stringForTextBox1_TextChangedEqual) || (stringForTextBox1_TextChangedEqual == string.Join("\r\n", textBox1.Lines)))
             {
-                if (((string.Join("\r\n", stringToTextBox) == string.Join("\r\n", textBox1.Lines)) 
+                if (((string.Join("\r\n", stringToTextBox) == string.Join("\r\n", textBox1.Lines))
                     && !string.IsNullOrWhiteSpace(stringForTextBox1_TextChangedEqual))
                     && TextboxCompatisonByLogicalOr())
                 {
@@ -227,6 +227,7 @@ namespace Correction_of_letters_in_words
                 BackColor = SystemColors.Window;
                 button1.BackColor = SystemColors.ControlLight;
                 button1.Text = "Исправить";
+                return;
             }
         }
 
@@ -244,7 +245,6 @@ namespace Correction_of_letters_in_words
                 || (button1.Text.Contains("Нечего исправлять") && confirmsTextSaving))
                 || TextboxCompatisonByLogicalOr())
             {
-
                 filesInFolder = Directory.GetFiles($@"C:\Users\{Environment.UserName}\Desktop", "Fixed*");
 
                 if (filesInFolder.Any())
@@ -285,6 +285,14 @@ namespace Correction_of_letters_in_words
                 || textBox1.Text.Contains("Всё равно"));
         }
 
+        void MaybeSaveTextToClipboardAndChangeForm(bool yesOrNo, Color colorToBackColor, string textToButtonText)
+        {
+            confirmsTextSaving = yesOrNo;
+            BackColor = colorToBackColor;
+            button1.BackColor = Color.White;
+            button1.Text = textToButtonText;
+        }
+
         async void SaveTextToClipboardAndChangeForm(string[] arrayOfStringAfterReplacement)
         {
             confirmsTextSaving = true;
@@ -292,25 +300,24 @@ namespace Correction_of_letters_in_words
             button1.BackColor = Color.White;
             button1.Text = "Исправлено";
             textBox1.Lines = arrayOfStringAfterReplacement;
-
-            await Task.Delay(1000);
-
             Clipboard.SetDataObject(textBox1.Text, true);
-            button1.BackColor = Color.Bisque;
-            button1.Text = "Скопировано в буфер обмена";
 
-            await Task.Delay(1000);
+            await Task.Delay(800);
 
-            button1.BackColor = Color.White;
-            button1.Text = "Исправлено";
-        }
+            if (textBox1.Text == stringForTextBox1_TextChangedEqual)
+            {
+                button1.BackColor = Color.Bisque;
+                button1.Text = "Скопировано в буфер";
+            }
 
-        void MaybeSaveTextToClipboardAndChangeForm(bool yesOrNo, Color colorToBackColor, string textToButtonText )
-        {
-            confirmsTextSaving = yesOrNo;
-            BackColor = colorToBackColor;
-            button1.BackColor = Color.White;
-            button1.Text = textToButtonText;
+            await Task.Delay(800);
+
+            if (textBox1.Text == stringForTextBox1_TextChangedEqual)
+            {
+                BackColor = Color.LightGreen;
+                button1.BackColor = Color.White;
+                button1.Text = "Исправлено";
+            }
         }
     }
 }
