@@ -203,7 +203,7 @@ namespace Correction_of_letters_in_words
             {
                 if (((string.Join("\r\n", stringToTextBox) == string.Join("\r\n", textBox1.Lines))
                     && !string.IsNullOrWhiteSpace(stringForTextBox1_TextChangedEqual))
-                    && TextboxCompatisonByLogicalOr())
+                    && (textBox1.Text.Contains("ещё") || textBox1.Text.Contains("Ещё") || textBox1.Text.Contains("всё равно") || textBox1.Text.Contains("Всё равно")))
                 {
                     // Пример для захода в if: все равно -> Button -> всё равно ещё
                     if (Clipboard.GetText() != stringForTextBox1_TextChangedEqual)
@@ -241,9 +241,9 @@ namespace Correction_of_letters_in_words
 
         async void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
-            if ((button1.Text.Contains("Исправлено")
+            if ((button1.Text.Contains("Исправлено") 
                 || (button1.Text.Contains("Нечего исправлять") && confirmsTextSaving))
-                || TextboxCompatisonByLogicalOr())
+                || (textBox1.Text.Contains("ещё") || textBox1.Text.Contains("Ещё") || textBox1.Text.Contains("всё равно") || textBox1.Text.Contains("Всё равно")))
             {
                 filesInFolder = Directory.GetFiles($@"C:\Users\{Environment.UserName}\Desktop", "Fixed*");
 
@@ -275,14 +275,6 @@ namespace Correction_of_letters_in_words
                     Process.Start(path);
                 }
             }
-        }
-
-        bool TextboxCompatisonByLogicalOr()
-        {
-            return (textBox1.Text.Contains("ещё")
-                || textBox1.Text.Contains("Ещё")
-                || textBox1.Text.Contains("всё равно")
-                || textBox1.Text.Contains("Всё равно"));
         }
 
         void MaybeSaveTextToClipboardAndChangeForm(bool yesOrNo, Color colorToBackColor, string textToButtonText)
