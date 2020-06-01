@@ -24,109 +24,38 @@ namespace Correction_of_letters_in_words
 {
     public partial class Form1 : Form
     {
-        bool confirmsTextSaving = false;
+        bool confirmsTextSaving;
         byte digitsInTheFileName;
-        string tempStringForButton1_ClickForeachCh = "", stringForTextBox1_TextChangedEqual = "", path = $@"C:\Users\{Environment.UserName}\Desktop\Fixed.txt";
+        string tempStringForButton1_ClickForeachCh, stringForTextBox1_TextChangedEqual, path;
         string[] filesInFolder;
 
         public Form1()
         {
             InitializeComponent();
 
-            Load += async (s, e) =>
-             {
-                 for (Opacity = 0; Opacity <= 1; Opacity += .02)
-                     await Task.Delay(10);
-
-                 notifyIcon1.BalloonTipTitle = "Замена \"все равно / еще\" на  \"всё равно / ещё\"";
-                 notifyIcon1.BalloonTipText = "Cвернуто";
-                 notifyIcon1.Text = "Замена \"все равно / еще\" на  \"всё равно / ещё\"";
-
-             };
-
-            FormClosing += async (s, e) =>
-            {
-                if ((button1.Text.Contains("Исправлено") || (button1.Text.Contains("Нечего исправлять") && confirmsTextSaving))
-                    || (textBox1.Text.Contains("ещё")
-                    || textBox1.Text.Contains("Ещё")
-                    || textBox1.Text.Contains("всё равно")
-                    || textBox1.Text.Contains("Всё равно")))
-                {
-                    
-                    filesInFolder = Directory.GetFiles($@"C:\Users\{Environment.UserName}\Desktop", "Fixed*");
-
-                    if (filesInFolder.Any())
-                    {
-                        if (filesInFolder[filesInFolder.Length - 1].Contains("Fixed.txt"))
-                            path = $@"C:\Users\{Environment.UserName}\Desktop\Fixed1.txt";
-                        else
-                        {
-                            filesInFolder[filesInFolder.Length - 1] = filesInFolder[filesInFolder.Length - 1].Substring(filesInFolder[filesInFolder.Length - 1].IndexOf('d') + 1);
-                            digitsInTheFileName = Convert.ToByte(filesInFolder[filesInFolder.Length - 1].Remove(filesInFolder[filesInFolder.Length - 1].IndexOf('.')));
-                            path = $@"C:\Users\{Environment.UserName}\Desktop\Fixed{++digitsInTheFileName}.txt";
-                        }
-                    }
-
-                    DialogResult saveOrClose = MessageBox.Show($"Сохранить исправленный текст по пути {path}?", "Сохранение текста в файл", MessageBoxButtons.YesNo, MessageBoxIcon.Asterisk);
-
-                    if (saveOrClose == DialogResult.Yes)
-                    {
-                        using (StreamWriter streamWriter = new StreamWriter(path))
-                        {
-                            Button1_Click(s, e);
-
-                            Clipboard.SetDataObject(textBox1.Text, true);
-
-                            await streamWriter.WriteAsync(Clipboard.GetText(TextDataFormat.UnicodeText));
-                        }
-
-                        Process.Start(path);
-                    }
-                }
-            };
-
-            Resize += (s, e) =>
-            {
-                if (WindowState == FormWindowState.Minimized)
-                {
-                    Hide();
-                    notifyIcon1.Visible = true;
-                    notifyIcon1.BalloonTipTitle = "Замена \"все равно / еще\" на  \"всё равно / ещё\"";
-                    notifyIcon1.BalloonTipText = "Cвернуто";
-                    notifyIcon1.ShowBalloonTip(1000);
-                }
-
-                else if (WindowState == FormWindowState.Normal)
-                    notifyIcon1.Visible = true;
-            };
-
-            notifyIcon1.MouseDoubleClick += (s, e) =>
-            {
-                Show();
-                notifyIcon1.Visible = true;
-                WindowState = FormWindowState.Normal;
-            };
-
-            textBox1.DragEnter += (s, e) =>
-            {
-                e.Effect = DragDropEffects.Copy;
-                textBox1.Text = e.Data.GetData(DataFormats.Text).ToString();
-            };
-
-            textBox1.TextChanged += (s, e) =>
-             {
-                 if (textBox1.Text != stringForTextBox1_TextChangedEqual)
-                 {
-                     BackColor = SystemColors.Window;
-                     button1.BackColor = SystemColors.ControlLight;
-                     button1.Text = "Исправить";
-                 }
-             };
-
-            closeToolStripMenuItem.Click += (s, e) => Close();
+            confirmsTextSaving = false;
+            tempStringForButton1_ClickForeachCh = "";
+            stringForTextBox1_TextChangedEqual = "";
+            path = $@"C:\Users\{Environment.UserName}\Desktop\Fixed.txt";
         }
 
-        async void Button1_Click(object sender, EventArgs e)
+        async void Form1_Load(object sender, EventArgs e)
+        {
+            for (Opacity = 0; Opacity <= 1; Opacity += .02)
+            {
+                if (Opacity == 1)
+                    break;
+                await Task.Delay(10);
+            }
+        }
+
+        void TextBox1_DragEnter(object sender, DragEventArgs e)
+        {
+            e.Effect = DragDropEffects.Copy;
+            textBox1.Text = e.Data.GetData(DataFormats.Text).ToString();
+        }
+
+        void Button1_Click(object sender, EventArgs e)
         {
             string[] stringToTextBox = new string[textBox1.Lines.Length];
             byte counter = 0;
@@ -272,71 +201,116 @@ namespace Correction_of_letters_in_words
 
             if (string.IsNullOrWhiteSpace(stringForTextBox1_TextChangedEqual) || (stringForTextBox1_TextChangedEqual == string.Join("\r\n", textBox1.Lines)))
             {
-                if (((string.Join("\r\n", stringToTextBox) == string.Join("\r\n", textBox1.Lines))
+                if (((string.Join("\r\n", stringToTextBox) == string.Join("\r\n", textBox1.Lines)) 
                     && !string.IsNullOrWhiteSpace(stringForTextBox1_TextChangedEqual))
-                    && (stringForTextBox1_TextChangedEqual.Contains("ещё")
-                    || stringForTextBox1_TextChangedEqual.Contains("Ещё")
-                    || stringForTextBox1_TextChangedEqual.Contains("всё равно")
-                    || stringForTextBox1_TextChangedEqual.Contains("Всё равно")))
+                    && TextboxCompatisonByLogicalOr())
                 {
+                    // Пример для захода в if: все равно -> Button -> всё равно ещё
                     if (Clipboard.GetText() != stringForTextBox1_TextChangedEqual)
-                    {
-                        confirmsTextSaving = true;
-                        BackColor = Color.LightGreen;
-                        button1.BackColor = Color.White;
-                        button1.Text = "Исправлено";
-                        textBox1.Lines = stringToTextBox;
-
-                        await Task.Delay(1000);
-
-                        Clipboard.SetDataObject(textBox1.Text, true);
-                        button1.BackColor = Color.Bisque;
-                        button1.Text = "Скопировано в буфер обмена";
-
-                        await Task.Delay(1000);
-
-                        button1.BackColor = Color.White;
-                        button1.Text = "Исправлено";
-                    }
-
-                    else 
-                    {
-                        confirmsTextSaving = true;
-                        BackColor = Color.LightGreen;
-                        button1.BackColor = Color.White;
-                        button1.Text = "Исправлено";
-                    }
-                    
+                        SaveTextToClipboardAndChangeForm(stringToTextBox);
+                    else
+                        MaybeSaveTextToClipboardAndChangeForm(true, Color.LightGreen, "Исправлено");
                 }
 
                 else
-                {
-                    confirmsTextSaving = false;
-                    BackColor = Color.IndianRed;
-                    button1.BackColor = Color.White;
-                    button1.Text = "Нечего исправлять";
-                }
+                    MaybeSaveTextToClipboardAndChangeForm(false, Color.IndianRed, "Нечего исправлять");
             }
 
             else
+                SaveTextToClipboardAndChangeForm(stringToTextBox);
+        }
+
+        void TextBox1_TextChanged(object sender, EventArgs e)
+        {
+            if (textBox1.Text != stringForTextBox1_TextChangedEqual)
             {
-                confirmsTextSaving = true;
-                BackColor = Color.LightGreen;
-                button1.BackColor = Color.White;
-                button1.Text = "Исправлено";
-                textBox1.Lines = stringToTextBox;
-
-                await Task.Delay(1000);
-
-                Clipboard.SetDataObject(textBox1.Text, true);
-                button1.BackColor = Color.Bisque;
-                button1.Text = "Скопировано в буфер обмена";
-
-                await Task.Delay(1000);
-
-                button1.BackColor = Color.White;
-                button1.Text = "Исправлено";
+                BackColor = SystemColors.Window;
+                button1.BackColor = SystemColors.ControlLight;
+                button1.Text = "Исправить";
             }
+        }
+
+        void NotifyIcon1_MouseDoubleClick(object sender, MouseEventArgs e)
+        {
+            if (WindowState == FormWindowState.Minimized)
+                WindowState = FormWindowState.Normal;
+        }
+
+        void CloseToolStripMenuItem_Click(object sender, EventArgs e) => Close();
+
+        async void Form1_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            if ((button1.Text.Contains("Исправлено")
+                || (button1.Text.Contains("Нечего исправлять") && confirmsTextSaving))
+                || TextboxCompatisonByLogicalOr())
+            {
+
+                filesInFolder = Directory.GetFiles($@"C:\Users\{Environment.UserName}\Desktop", "Fixed*");
+
+                if (filesInFolder.Any())
+                {
+                    if (filesInFolder[filesInFolder.Length - 1].Contains("Fixed.txt"))
+                        path = $@"C:\Users\{Environment.UserName}\Desktop\Fixed1.txt";
+                    else
+                    {
+                        filesInFolder[filesInFolder.Length - 1] = filesInFolder[filesInFolder.Length - 1].Substring(filesInFolder[filesInFolder.Length - 1].IndexOf('d') + 1);
+                        digitsInTheFileName = Convert.ToByte(filesInFolder[filesInFolder.Length - 1].Remove(filesInFolder[filesInFolder.Length - 1].IndexOf('.')));
+                        path = $@"C:\Users\{Environment.UserName}\Desktop\Fixed{++digitsInTheFileName}.txt";
+                    }
+                }
+
+                DialogResult saveOrClose = MessageBox.Show($"Сохранить исправленный текст по пути {path}?", "Сохранение текста в файл", MessageBoxButtons.YesNo, MessageBoxIcon.Asterisk);
+
+                if (saveOrClose == DialogResult.Yes)
+                {
+                    using (StreamWriter streamWriter = new StreamWriter(path))
+                    {
+                        Button1_Click(sender, e);
+
+                        Clipboard.SetDataObject(textBox1.Text, true);
+
+                        await streamWriter.WriteAsync(Clipboard.GetText(TextDataFormat.UnicodeText));
+                    }
+
+                    Process.Start(path);
+                }
+            }
+        }
+
+        bool TextboxCompatisonByLogicalOr()
+        {
+            return (textBox1.Text.Contains("ещё")
+                || textBox1.Text.Contains("Ещё")
+                || textBox1.Text.Contains("всё равно")
+                || textBox1.Text.Contains("Всё равно"));
+        }
+
+        async void SaveTextToClipboardAndChangeForm(string[] arrayOfStringAfterReplacement)
+        {
+            confirmsTextSaving = true;
+            BackColor = Color.LightGreen;
+            button1.BackColor = Color.White;
+            button1.Text = "Исправлено";
+            textBox1.Lines = arrayOfStringAfterReplacement;
+
+            await Task.Delay(1000);
+
+            Clipboard.SetDataObject(textBox1.Text, true);
+            button1.BackColor = Color.Bisque;
+            button1.Text = "Скопировано в буфер обмена";
+
+            await Task.Delay(1000);
+
+            button1.BackColor = Color.White;
+            button1.Text = "Исправлено";
+        }
+
+        void MaybeSaveTextToClipboardAndChangeForm(bool yesOrNo, Color colorToBackColor, string textToButtonText )
+        {
+            confirmsTextSaving = yesOrNo;
+            BackColor = colorToBackColor;
+            button1.BackColor = Color.White;
+            button1.Text = textToButtonText;
         }
     }
 }
