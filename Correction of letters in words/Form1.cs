@@ -12,6 +12,7 @@
 все равно
 */
 
+using Correction_of_letters_in_words.Properties;
 using System;
 using System.Diagnostics;
 using System.Drawing;
@@ -28,6 +29,7 @@ namespace Correction_of_letters_in_words
         byte digitsInTheFileName;
         string tempStringForButton1_ClickForeachCh, stringForTextBox1_TextChangedEqual, path;
         string[] filesInFolder;
+        OpenFileDialog openFileDialog;
 
         public Form1()
         {
@@ -37,6 +39,16 @@ namespace Correction_of_letters_in_words
             tempStringForButton1_ClickForeachCh = "";
             stringForTextBox1_TextChangedEqual = "";
             path = $@"C:\Users\{Environment.UserName}\Desktop\Fixed.txt";
+            openFileDialog = new OpenFileDialog();
+            openFileDialog.InitialDirectory = $@"C:\Users\{Environment.UserName}\Desktop";
+
+            panel1.Paint += (s, e) =>
+            {
+                Pen pen = new Pen(SystemColors.ActiveCaption, 1);
+                pen.DashStyle = System.Drawing.Drawing2D.DashStyle.Dash;
+                //левый край линии, низ и правый край - не должны быть видны. ↓
+                e.Graphics.DrawRectangle(pen, -1, 0, panel1.Width + 1, panel1.Height);
+            };
         }
 
         async void Form1_Load(object sender, EventArgs e)
@@ -55,7 +67,44 @@ namespace Correction_of_letters_in_words
             textBox1.Text = e.Data.GetData(DataFormats.Text).ToString();
         }
 
-        void Button1_Click(object sender, EventArgs e)
+        void Panel1_DragEnter(object sender, DragEventArgs e)
+        {
+            if (e.Data.GetDataPresent(DataFormats.FileDrop))
+            {
+                panel1.BackgroundImage = Resources.Drop;
+                e.Effect = DragDropEffects.Move;
+            }
+        }
+
+        void Panel1_DragLeave(object sender, EventArgs e)
+        {
+            panel1.BackgroundImage = Resources.Drag;
+        }
+
+        void Panel1_DragDrop(object sender, DragEventArgs e)
+        {
+            //textBox1.Text = default;
+            panel1.BackgroundImage = Resources.Drag;
+            foreach (string fileLoc in (string[])e.Data.GetData(DataFormats.FileDrop))
+                using (TextReader textReader = new StreamReader(fileLoc))
+                    textBox1.Text = textReader.ReadToEnd();
+        }
+
+        async void Panel1_Click(object sender, EventArgs e)
+        {
+            openFileDialog.Title = "Открытие текстового файла";
+            openFileDialog.Filter = "Текстовый файл (*.txt)|*.txt";
+            openFileDialog.CheckFileExists = true;
+
+            if (openFileDialog.ShowDialog() == DialogResult.OK)
+            {
+                openFileDialog.InitialDirectory = Path.GetDirectoryName(openFileDialog.FileName);
+                using (StreamReader streamReader = new StreamReader(openFileDialog.OpenFile()))
+                    textBox1.Text = await streamReader.ReadToEndAsync();
+            }
+        }
+
+        void FixTextButton_Click(object sender, EventArgs e)
         {
             string[] stringToTextBox = new string[textBox1.Lines.Length];
             byte counter = 0;
@@ -211,11 +260,9 @@ namespace Correction_of_letters_in_words
                     else
                         MaybeSaveTextToClipboardAndChangeForm(true, Color.LightGreen, "Исправлено");
                 }
-
                 else
                     MaybeSaveTextToClipboardAndChangeForm(false, Color.IndianRed, "Нечего исправлять");
             }
-
             else
                 SaveTextToClipboardAndChangeForm(stringToTextBox);
         }
@@ -225,8 +272,8 @@ namespace Correction_of_letters_in_words
             if (textBox1.Text != stringForTextBox1_TextChangedEqual)
             {
                 BackColor = SystemColors.Window;
-                button1.BackColor = SystemColors.ControlLight;
-                button1.Text = "Исправить";
+                fixTextButton.BackColor = SystemColors.ControlLight;
+                fixTextButton.Text = "Исправить";
                 return;
             }
         }
@@ -241,8 +288,8 @@ namespace Correction_of_letters_in_words
 
         async void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
-            if ((button1.Text.Contains("Исправлено") 
-                || (button1.Text.Contains("Нечего исправлять") && confirmsTextSaving))
+            if ((fixTextButton.Text.Contains("Исправлено")
+                || (fixTextButton.Text.Contains("Нечего исправлять") && confirmsTextSaving))
                 || (textBox1.Text.Contains("ещё") || textBox1.Text.Contains("Ещё") || textBox1.Text.Contains("всё равно") || textBox1.Text.Contains("Всё равно")))
             {
                 filesInFolder = Directory.GetFiles($@"C:\Users\{Environment.UserName}\Desktop", "Fixed*");
@@ -265,10 +312,8 @@ namespace Correction_of_letters_in_words
                 {
                     using (StreamWriter streamWriter = new StreamWriter(path))
                     {
-                        Button1_Click(sender, e);
-
+                        FixTextButton_Click(sender, e);
                         Clipboard.SetDataObject(textBox1.Text, true);
-
                         await streamWriter.WriteAsync(Clipboard.GetText(TextDataFormat.UnicodeText));
                     }
 
@@ -281,16 +326,16 @@ namespace Correction_of_letters_in_words
         {
             confirmsTextSaving = yesOrNo;
             BackColor = colorToBackColor;
-            button1.BackColor = Color.White;
-            button1.Text = textToButtonText;
+            fixTextButton.BackColor = Color.White;
+            fixTextButton.Text = textToButtonText;
         }
 
         async void SaveTextToClipboardAndChangeForm(string[] arrayOfStringAfterReplacement)
         {
             confirmsTextSaving = true;
             BackColor = Color.LightGreen;
-            button1.BackColor = Color.White;
-            button1.Text = "Исправлено";
+            fixTextButton.BackColor = Color.White;
+            fixTextButton.Text = "Исправлено";
             textBox1.Lines = arrayOfStringAfterReplacement;
             Clipboard.SetDataObject(textBox1.Text, true);
 
@@ -298,8 +343,8 @@ namespace Correction_of_letters_in_words
 
             if (textBox1.Text == stringForTextBox1_TextChangedEqual)
             {
-                button1.BackColor = Color.Bisque;
-                button1.Text = "Скопировано в буфер";
+                fixTextButton.BackColor = Color.Bisque;
+                fixTextButton.Text = "Скопировано в буфер";
             }
 
             await Task.Delay(800);
@@ -307,8 +352,8 @@ namespace Correction_of_letters_in_words
             if (textBox1.Text == stringForTextBox1_TextChangedEqual)
             {
                 BackColor = Color.LightGreen;
-                button1.BackColor = Color.White;
-                button1.Text = "Исправлено";
+                fixTextButton.BackColor = Color.White;
+                fixTextButton.Text = "Исправлено";
             }
         }
     }
