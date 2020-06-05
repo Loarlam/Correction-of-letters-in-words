@@ -69,10 +69,18 @@ namespace Correction_of_letters_in_words
 
         void Panel1_DragEnter(object sender, DragEventArgs e)
         {
-            if (e.Data.GetDataPresent(DataFormats.FileDrop))
+            string[] lines = (string[])e.Data.GetData(DataFormats.FileDrop);
+
+            if (lines[0].Substring(lines[0].IndexOf(".")) == ".txt")
             {
                 panel1.BackgroundImage = Resources.Drop;
                 e.Effect = DragDropEffects.Move;
+            }
+
+            else
+            {
+                panel1.BackgroundImage = Resources.Error;
+                e.Effect = DragDropEffects.None;
             }
         }
 
