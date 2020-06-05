@@ -275,6 +275,41 @@ namespace Correction_of_letters_in_words
                 SaveTextToClipboardAndChangeForm(stringToTextBox);
         }
 
+        void MaybeSaveTextToClipboardAndChangeForm(bool yesOrNo, Color colorToBackColor, string textToButtonText)
+        {
+            confirmsTextSaving = yesOrNo;
+            BackColor = colorToBackColor;
+            fixTextButton.BackColor = Color.White;
+            fixTextButton.Text = textToButtonText;
+        }
+
+        async void SaveTextToClipboardAndChangeForm(string[] arrayOfStringAfterReplacement)
+        {
+            confirmsTextSaving = true;
+            BackColor = Color.LightGreen;
+            fixTextButton.BackColor = Color.White;
+            fixTextButton.Text = "Исправлено";
+            textBox1.Lines = arrayOfStringAfterReplacement;
+            Clipboard.SetDataObject(textBox1.Text, true);
+
+            await Task.Delay(800);
+
+            if (textBox1.Text == stringForTextBox1_TextChangedEqual)
+            {
+                fixTextButton.BackColor = Color.Bisque;
+                fixTextButton.Text = "Скопировано в буфер";
+            }
+
+            await Task.Delay(800);
+
+            if (textBox1.Text == stringForTextBox1_TextChangedEqual)
+            {
+                BackColor = Color.LightGreen;
+                fixTextButton.BackColor = Color.White;
+                fixTextButton.Text = "Исправлено";
+            }
+        }
+
         void TextBox1_TextChanged(object sender, EventArgs e)
         {
             if (textBox1.Text != stringForTextBox1_TextChangedEqual)
@@ -327,41 +362,6 @@ namespace Correction_of_letters_in_words
 
                     Process.Start(path);
                 }
-            }
-        }
-
-        void MaybeSaveTextToClipboardAndChangeForm(bool yesOrNo, Color colorToBackColor, string textToButtonText)
-        {
-            confirmsTextSaving = yesOrNo;
-            BackColor = colorToBackColor;
-            fixTextButton.BackColor = Color.White;
-            fixTextButton.Text = textToButtonText;
-        }
-
-        async void SaveTextToClipboardAndChangeForm(string[] arrayOfStringAfterReplacement)
-        {
-            confirmsTextSaving = true;
-            BackColor = Color.LightGreen;
-            fixTextButton.BackColor = Color.White;
-            fixTextButton.Text = "Исправлено";
-            textBox1.Lines = arrayOfStringAfterReplacement;
-            Clipboard.SetDataObject(textBox1.Text, true);
-
-            await Task.Delay(800);
-
-            if (textBox1.Text == stringForTextBox1_TextChangedEqual)
-            {
-                fixTextButton.BackColor = Color.Bisque;
-                fixTextButton.Text = "Скопировано в буфер";
-            }
-
-            await Task.Delay(800);
-
-            if (textBox1.Text == stringForTextBox1_TextChangedEqual)
-            {
-                BackColor = Color.LightGreen;
-                fixTextButton.BackColor = Color.White;
-                fixTextButton.Text = "Исправлено";
             }
         }
     }
