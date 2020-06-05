@@ -46,7 +46,6 @@ namespace Correction_of_letters_in_words
             {
                 Pen pen = new Pen(SystemColors.ActiveCaption, 1);
                 pen.DashStyle = System.Drawing.Drawing2D.DashStyle.Dash;
-                //левый край линии, низ и правый край - не должны быть видны. ↓
                 e.Graphics.DrawRectangle(pen, -1, 0, panel1.Width + 1, panel1.Height);
             };
         }
