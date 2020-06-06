@@ -19,6 +19,7 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Drawing.Drawing2D;
 using System.Windows.Forms;
 
 namespace Correction_of_letters_in_words
@@ -45,7 +46,7 @@ namespace Correction_of_letters_in_words
             panel1.Paint += (s, e) =>
             {
                 Pen pen = new Pen(SystemColors.ActiveCaption, 1);
-                pen.DashStyle = System.Drawing.Drawing2D.DashStyle.Dash;
+                pen.DashStyle = DashStyle.Dash;
                 e.Graphics.DrawRectangle(pen, -1, 0, panel1.Width + 1, panel1.Height);
             };
         }
@@ -90,7 +91,6 @@ namespace Correction_of_letters_in_words
 
         void Panel1_DragDrop(object sender, DragEventArgs e)
         {
-            //textBox1.Text = default;
             panel1.BackgroundImage = Resources.Drag;
             foreach (string fileLoc in (string[])e.Data.GetData(DataFormats.FileDrop))
                 using (TextReader textReader = new StreamReader(fileLoc))
