@@ -64,7 +64,7 @@ namespace Correction_of_letters_in_words
         void TextBox1_DragEnter(object sender, DragEventArgs e)
         {
             e.Effect = DragDropEffects.Copy;
-            textBox1.Text = e.Data.GetData(DataFormats.Text).ToString();
+            textBox1.Text = $"{e.Data.GetData(DataFormats.Text)}";
         }
 
         void Panel1_DragEnter(object sender, DragEventArgs e)
@@ -158,21 +158,21 @@ namespace Correction_of_letters_in_words
                             case 'В':
                             case 'в':
                                 if (tempStringForButton1_ClickForeachCh.StartsWith("все ра"))
-                                    tempStringForButton1_ClickForeachCh += ch.ToString();
+                                    tempStringForButton1_ClickForeachCh += $"{ch}";
                                 else if (tempStringForButton1_ClickForeachCh != null)
-                                    tempStringForButton1_ClickForeachCh = ch.ToString();
+                                    tempStringForButton1_ClickForeachCh = $"{ch}";
                                 else
-                                    tempStringForButton1_ClickForeachCh += ch.ToString();
+                                    tempStringForButton1_ClickForeachCh += $"{ch}";
                                 break;
                             case 'с':
                                 if (tempStringForButton1_ClickForeachCh.StartsWith("в") || tempStringForButton1_ClickForeachCh.StartsWith("В"))
-                                    tempStringForButton1_ClickForeachCh += ch.ToString();
+                                    tempStringForButton1_ClickForeachCh += $"{ch}";
                                 else
                                     tempStringForButton1_ClickForeachCh = "";
                                 break;
                             case 'е':
                                 if (tempStringForButton1_ClickForeachCh.StartsWith("вс") || tempStringForButton1_ClickForeachCh.StartsWith("Вс"))
-                                    tempStringForButton1_ClickForeachCh += ch.ToString();
+                                    tempStringForButton1_ClickForeachCh += $"{ch}";
                                 else
                                     tempStringForButton1_ClickForeachCh = "";
                                 break;
@@ -182,7 +182,7 @@ namespace Correction_of_letters_in_words
                             case 'о':
                                 if (ch == 'о' && (tempStringForButton1_ClickForeachCh.StartsWith("все равн") || tempStringForButton1_ClickForeachCh.StartsWith("Все равн")))
                                 {
-                                    tempStringForButton1_ClickForeachCh += ch.ToString();
+                                    tempStringForButton1_ClickForeachCh += $"{ch}";
 
                                     if (chars.Length == indexer)
                                     {
@@ -220,25 +220,25 @@ namespace Correction_of_letters_in_words
                                 }
 
                                 else if ((tempStringForButton1_ClickForeachCh.StartsWith("все") || tempStringForButton1_ClickForeachCh.StartsWith("Все")) && char.IsWhiteSpace(ch))
-                                    tempStringForButton1_ClickForeachCh += ch.ToString();
+                                    tempStringForButton1_ClickForeachCh += $"{ch}";
                                 else
                                     tempStringForButton1_ClickForeachCh = "";
                                 break;
                             case 'р':
                                 if (tempStringForButton1_ClickForeachCh.StartsWith("все ") || tempStringForButton1_ClickForeachCh.StartsWith("Все "))
-                                    tempStringForButton1_ClickForeachCh += ch.ToString();
+                                    tempStringForButton1_ClickForeachCh += $"{ch}";
                                 else
                                     tempStringForButton1_ClickForeachCh = "";
                                 break;
                             case 'а':
                                 if (tempStringForButton1_ClickForeachCh.StartsWith("все р") || tempStringForButton1_ClickForeachCh.StartsWith("Все р"))
-                                    tempStringForButton1_ClickForeachCh += ch.ToString();
+                                    tempStringForButton1_ClickForeachCh += $"{ch}";
                                 else
                                     tempStringForButton1_ClickForeachCh = "";
                                 break;
                             case 'н':
                                 if (tempStringForButton1_ClickForeachCh.StartsWith("все рав") || tempStringForButton1_ClickForeachCh.StartsWith("Все рав"))
-                                    tempStringForButton1_ClickForeachCh += ch.ToString();
+                                    tempStringForButton1_ClickForeachCh += $"{ch}";
                                 else
                                     tempStringForButton1_ClickForeachCh = "";
                                 break;
