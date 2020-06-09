@@ -68,9 +68,9 @@ namespace Correction_of_letters_in_words
 
         void Panel1_DragEnter(object sender, DragEventArgs e)
         {
-            string[] lines = (string[])e.Data.GetData(DataFormats.FileDrop);
+            string fileName = ((string[])e.Data.GetData(DataFormats.FileDrop))[0];
 
-            if (lines[0].Substring(lines[0].IndexOf(".")) == ".txt")
+            if (fileName.Substring(fileName.IndexOf(".")) == ".txt")
             {
                 panel1.BackgroundImage = Resources.Drop;
                 e.Effect = DragDropEffects.Move;
@@ -88,9 +88,8 @@ namespace Correction_of_letters_in_words
         void Panel1_DragDrop(object sender, DragEventArgs e)
         {
             panel1.BackgroundImage = Resources.Drag;
-            foreach (string fileLoc in (string[])e.Data.GetData(DataFormats.FileDrop))
-                using (TextReader textReader = new StreamReader(fileLoc))
-                    textBox1.Text = textReader.ReadToEnd();
+            using (StreamReader streamReader = new StreamReader(((string[])e.Data.GetData(DataFormats.FileDrop))[0]))
+                textBox1.Text = streamReader.ReadToEnd();
         }
 
         async void Panel1_Click(object sender, EventArgs e)
