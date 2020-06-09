@@ -41,13 +41,6 @@ namespace Correction_of_letters_in_words
             stringForTextBox1_TextChangedEqual = "";
             path = $@"C:\Users\{Environment.UserName}\Desktop\Fixed.txt";
             openFileDialog = new OpenFileDialog { InitialDirectory = $@"C:\Users\{Environment.UserName}\Desktop" };
-
-            panel1.Paint += (s, e) =>
-            {
-                Pen pen = new Pen(SystemColors.ActiveCaption, 1);
-                pen.DashStyle = DashStyle.Dash;
-                e.Graphics.DrawRectangle(pen, -1, 0, panel1.Width + 1, panel1.Height);
-            };
         }
 
         async void Form1_Load(object sender, EventArgs e)
@@ -58,6 +51,13 @@ namespace Correction_of_letters_in_words
                     break;
                 await Task.Delay(10);
             }
+        }
+
+        void Panel1_Paint(object sender, PaintEventArgs e)
+        {
+            Pen pen = new Pen(SystemColors.ActiveCaption, 1);
+            pen.DashStyle = DashStyle.Dash;
+            e.Graphics.DrawRectangle(pen, -1, 0, panel1.Width + 1, panel1.Height);
         }
 
         void TextBox1_DragEnter(object sender, DragEventArgs e)
