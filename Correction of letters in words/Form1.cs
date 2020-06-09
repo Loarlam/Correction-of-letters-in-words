@@ -16,10 +16,10 @@ using Correction_of_letters_in_words.Properties;
 using System;
 using System.Diagnostics;
 using System.Drawing;
+using System.Drawing.Drawing2D;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Drawing.Drawing2D;
 using System.Windows.Forms;
 
 namespace Correction_of_letters_in_words
@@ -40,8 +40,7 @@ namespace Correction_of_letters_in_words
             tempStringForButton1_ClickForeachCh = "";
             stringForTextBox1_TextChangedEqual = "";
             path = $@"C:\Users\{Environment.UserName}\Desktop\Fixed.txt";
-            openFileDialog = new OpenFileDialog();
-            openFileDialog.InitialDirectory = $@"C:\Users\{Environment.UserName}\Desktop";
+            openFileDialog = new OpenFileDialog { InitialDirectory = $@"C:\Users\{Environment.UserName}\Desktop" };
 
             panel1.Paint += (s, e) =>
             {
@@ -84,10 +83,7 @@ namespace Correction_of_letters_in_words
             }
         }
 
-        void Panel1_DragLeave(object sender, EventArgs e)
-        {
-            panel1.BackgroundImage = Resources.Drag;
-        }
+        void Panel1_DragLeave(object sender, EventArgs e) => panel1.BackgroundImage = Resources.Drag;
 
         void Panel1_DragDrop(object sender, DragEventArgs e)
         {
