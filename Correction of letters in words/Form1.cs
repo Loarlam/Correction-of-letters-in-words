@@ -343,6 +343,14 @@ namespace Correction_of_letters_in_words
                     using (StreamWriter streamWriter = new StreamWriter(path))
                     {
                         FixTextButton_Click(sender, e);
+
+                        /*if ниже выступает в ролиэффекта плацебо для пользователя*/
+                        if (BackColor != Color.LightGreen)
+                        {
+                            BackColor = Color.LightGreen;
+                            fixTextButton.Text = "Исправлено";
+                        }
+
                         Clipboard.SetDataObject(textBox1.Text, true);
                         await streamWriter.WriteAsync(Clipboard.GetText(TextDataFormat.UnicodeText));
                     }
