@@ -252,16 +252,9 @@ namespace Correction_of_letters_in_words
 
             if (string.IsNullOrWhiteSpace(stringForTextBox1_TextChangedEqual) || (stringForTextBox1_TextChangedEqual == string.Join("\r\n", textBox1.Lines)))
             {
-                if (((string.Join("\r\n", stringToTextBox) == string.Join("\r\n", textBox1.Lines))
-                    && !string.IsNullOrWhiteSpace(stringForTextBox1_TextChangedEqual))
+                if (!string.IsNullOrWhiteSpace(stringForTextBox1_TextChangedEqual)
                     && (textBox1.Text.Contains("ещё") || textBox1.Text.Contains("Ещё") || textBox1.Text.Contains("всё равно") || textBox1.Text.Contains("Всё равно")))
-                {
-                    // Пример для захода в if: все равно -> Button -> всё равно ещё
-                    if (Clipboard.GetText() != stringForTextBox1_TextChangedEqual)
-                        SaveTextToClipboardAndChangeForm(stringToTextBox);
-                    else
-                        MaybeSaveTextToClipboardAndChangeForm(true, Color.LightGreen, "Исправлено");
-                }
+                    MaybeSaveTextToClipboardAndChangeForm(true, Color.IndianRed, "Нечего исправлять");
                 else
                     MaybeSaveTextToClipboardAndChangeForm(false, Color.IndianRed, "Нечего исправлять");
             }
@@ -343,7 +336,7 @@ namespace Correction_of_letters_in_words
                     }
                 }
 
-                DialogResult saveOrClose = MessageBox.Show($"Сохранить исправленный текст по пути {path}?", "Сохранение текста в файл", MessageBoxButtons.YesNo, MessageBoxIcon.Asterisk);
+                DialogResult saveOrClose = MessageBox.Show($"Сохранить текст по пути {path}?", "Сохранение текста в файл", MessageBoxButtons.YesNo, MessageBoxIcon.Asterisk);
 
                 if (saveOrClose == DialogResult.Yes)
                 {
