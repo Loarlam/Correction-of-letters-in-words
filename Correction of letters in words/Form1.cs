@@ -304,7 +304,6 @@ namespace Correction_of_letters_in_words
                 BackColor = SystemColors.Window;
                 fixTextButton.BackColor = SystemColors.ControlLight;
                 fixTextButton.Text = "Исправить";
-                return;
             }
         }
 
