@@ -1,5 +1,5 @@
 # Correction-of-letters-in-words
-Задание:
+Задание (сам себе):
 >1. создать программу, в которой должен быть TextBox, Button, NotifyIcon, ContextMenuStrip, Icon, ScrollBar, Panel, OpenFileDialog;
 >2. реализовать плавное появление окна при запуске программы;
 >3. программа должна уметь разворачиваться  из трей;
