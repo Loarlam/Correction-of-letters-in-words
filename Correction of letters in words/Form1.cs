@@ -85,11 +85,11 @@ namespace Correction_of_letters_in_words
 
         void Panel1_DragLeave(object sender, EventArgs e) => panel1.BackgroundImage = Resources.Drag;
 
-        void Panel1_DragDrop(object sender, DragEventArgs e)
+        async void Panel1_DragDrop(object sender, DragEventArgs e)
         {
             panel1.BackgroundImage = Resources.Drag;
             using (StreamReader streamReader = new StreamReader(((string[])e.Data.GetData(DataFormats.FileDrop))[0]))
-                textBox1.Text = streamReader.ReadToEnd();
+                textBox1.Text = await streamReader.ReadToEndAsync();
         }
 
         async void Panel1_Click(object sender, EventArgs e)
@@ -344,7 +344,7 @@ namespace Correction_of_letters_in_words
                     {
                         FixTextButton_Click(sender, e);
 
-                        /*if ниже выступает в ролиэффекта плацебо для пользователя*/
+                        /*if ниже выступает в роли эффекта плацебо для пользователя*/
                         if (BackColor != Color.LightGreen)
                         {
                             BackColor = Color.LightGreen;
