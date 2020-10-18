@@ -3,6 +3,7 @@
 Вовсе все равноправны все равно, все равно еще
 Вовсе все равноправны все равно, все равно еще,
 Вовсе все равноправны все равно, все равно еще.
+Все равно Все равно все равно еще Еще
 Еще еще
 еще Еще
 Еще все равно еще
@@ -27,7 +28,7 @@ namespace Correction_of_letters_in_words
     public partial class Form1 : Form
     {
         bool confirmsTextSaving;
-        byte digitsInTheFileName;
+        int digitsInTheFileName;
         string tempStringForButton1_ClickForeachCh, stringForTextBox1_TextChangedEqual, path;
         string[] filesInFolder;
         OpenFileDialog openFileDialog;
@@ -109,7 +110,7 @@ namespace Correction_of_letters_in_words
         void FixTextButton_Click(object sender, EventArgs e)
         {
             string[] stringToTextBox = new string[textBox1.Lines.Length];
-            byte counter = 0;
+            int counter = 0;
 
             foreach (string line in textBox1.Lines)
             {
@@ -155,7 +156,7 @@ namespace Correction_of_letters_in_words
                                 if (tempStringForButton1_ClickForeachCh.StartsWith("все ра"))
                                     tempStringForButton1_ClickForeachCh += $"{ch}";
                                 else if (tempStringForButton1_ClickForeachCh != null)
-                                    tempStringForButton1_ClickForeachCh = $"{ch}";
+                                    tempStringForButton1_ClickForeachCh += $"{ch}";
                                 else
                                     tempStringForButton1_ClickForeachCh += $"{ch}";
                                 break;
