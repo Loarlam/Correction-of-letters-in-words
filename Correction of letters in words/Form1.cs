@@ -63,8 +63,14 @@ namespace Correction_of_letters_in_words
 
         void TextBox1_DragEnter(object sender, DragEventArgs e)
         {
-            e.Effect = DragDropEffects.Copy;
-            textBox1.Text = $"{e.Data.GetData(DataFormats.Text)}";
+            if (e.Data.GetDataPresent(DataFormats.StringFormat))
+            {
+                e.Effect = DragDropEffects.Copy;
+                textBox1.Text = $"{e.Data.GetData(DataFormats.StringFormat)}";
+            }
+
+            else
+                e.Effect = DragDropEffects.None;
         }
 
         void Panel1_DragEnter(object sender, DragEventArgs e)
